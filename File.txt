@@ -1,0 +1,1 @@
+ Info.plist에 LSUIElement 추가       
