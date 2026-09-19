@@ -159,9 +159,8 @@
     </ol>
     <p class="note">
       <strong>왜 스크립트를 실행해야 하나요?</strong><br>
-      애플 개발자 인증서 없이 만든 앱이라 그냥 열면 macOS가 막습니다.
-      <code>install.command</code> 는 앱을 <code>/Applications</code> 로 옮기고 그 격리 표시를 떼는 일만 합니다.
-      무슨 일을 하는지는 <a href="https://github.com/nounumm/gohome/blob/main/build_and_package.sh">빌드 스크립트</a>에서 그대로 볼 수 있습니다.
+      서명이 없는 앱이라 그냥 열면 macOS가 막습니다.
+      <code>install.command</code> 가 앱을 제자리에 옮기고 그 부분을 처리합니다.
     </p>
   </section>
 
@@ -169,17 +168,13 @@
     <h2>설치 — Windows</h2>
     <ol>
       <li>버튼으로 <code>GoHome.exe</code> 를 받습니다. 설치 과정이 따로 없습니다.</li>
-      <li><strong>계속 둘 폴더로 먼저 옮깁니다.</strong> 자동 실행을 켜면 그 시점의 경로를 기억하기 때문에, 나중에 파일을 옮기면 자동 실행이 깨집니다.</li>
+      <li><strong>계속 둘 폴더로 먼저 옮깁니다.</strong> 나중에 옮기면 자동 실행이 풀립니다.</li>
       <li>실행하면 트레이에 집 모양 아이콘이 생깁니다.</li>
     </ol>
     <p class="note">
       <strong>&ldquo;Windows에서 PC를 보호했습니다&rdquo; 창이 뜹니다.</strong><br>
-      코드 서명 인증서가 없어서 처음 실행할 때 한 번 뜹니다.
+      서명이 없어서 처음 한 번 뜹니다.
       <strong>추가 정보</strong> 를 누르고 <strong>실행</strong> 을 고르면 됩니다. 다음부터는 안 뜹니다.
-    </p>
-    <p class="note" style="margin-top:12px">
-      <strong>.NET 설치는 필요 없습니다.</strong><br>
-      런타임을 앱 안에 넣어 만들어서 exe 하나로 돌아갑니다. 68MB인 이유가 이겁니다.
     </p>
   </section>
 
@@ -187,7 +182,7 @@
     <h2>알아둘 것</h2>
     <table>
       <tr><td>필요 버전</td><td>macOS 14 이상 / Windows 10 이상 (64비트)</td></tr>
-      <tr><td>기록 저장 위치</td><td>맥은 <code>~/Library/Application Support/gohome/</code>, 윈도우는 <code>%APPDATA%\gohome\</code> 안의 JSON 파일 하나. 어디로도 전송되지 않습니다.</td></tr>
+      <tr><td>기록</td><td>이 컴퓨터 안에만 저장됩니다. 어디로도 전송되지 않습니다.</td></tr>
       <tr><td>상주</td><td>잠금 해제를 감지해야 하므로 설정에서 자동 실행을 켜두는 편이 낫습니다.</td></tr>
       <tr><td>기준 시각</td><td>한국 시간(KST) 고정</td></tr>
     </table>
