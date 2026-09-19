@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>집에가자 — 퇴근 시간 알려주는 맥 메뉴바 앱</title>
+<meta name="description" content="잠금만 풀면 출근이 찍히고, 퇴근 예정 시각을 메뉴바에서 알려주는 macOS 앱.">
+<link rel="icon" href="icon.png">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f6f7f9;
+    --text: #17181c;
+    --text-dim: #6b7280;
+    --line: #e4e6ea;
+    --accent: #e8590c;
+    --accent-ink: #ffffff;
+    --code-bg: #f1f3f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16171a;
+      --bg-soft: #1e2024;
+      --text: #e9eaec;
+      --text-dim: #9aa0a8;
+      --line: #2c2f35;
+      --accent: #ff922b;
+      --accent-ink: #1a1205;
+      --code-bg: #24262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 24px; }
+
+  header { text-align: center; padding: 72px 0 56px; }
+  header img { width: 96px; height: 96px; image-rendering: -webkit-optimize-contrast; }
+  h1 { font-size: 34px; margin: 20px 0 6px; letter-spacing: -0.02em; }
+  .tagline { color: var(--text-dim); font-size: 17px; margin: 0 0 32px; }
+
+  .btn {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--accent-ink);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 13px 30px;
+    border-radius: 9px;
+  }
+  .btn:hover { opacity: 0.88; }
+  .meta { color: var(--text-dim); font-size: 13px; margin-top: 12px; }
+  .meta a { color: var(--text-dim); }
+
+  section { border-top: 1px solid var(--line); padding: 40px 0; }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); margin: 0 0 22px; font-weight: 600; }
+  h3 { font-size: 16px; margin: 0 0 4px; }
+  p { margin: 0 0 14px; }
+
+  .feat { display: grid; gap: 22px; }
+  .feat div { }
+  .feat p { color: var(--text-dim); font-size: 15px; margin: 0; }
+
+  ol { margin: 0; padding-left: 20px; }
+  ol li { margin-bottom: 14px; }
+  ol li::marker { color: var(--text-dim); }
+
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9em;
+  }
+
+  .note {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 14.5px;
+    color: var(--text-dim);
+  }
+  .note strong { color: var(--text); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  td { padding: 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td:first-child { color: var(--text-dim); width: 40%; }
+  tr:last-child td { border-bottom: 0; }
+
+  footer { border-top: 1px solid var(--line); padding: 32px 0 64px; font-size: 14px; color: var(--text-dim); text-align: center; }
+  footer a { color: var(--text-dim); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <img src="icon.png" alt="">
+    <h1>집에가자</h1>
+    <p class="tagline">잠금만 풀면 출근이 찍히고,<br>언제 집에 갈 수 있는지 메뉴바가 알려줍니다.</p>
+    <a class="btn" href="https://github.com/nounumm/gohome/releases/latest/download/gohome.zip">macOS용 내려받기</a>
+    <p class="meta">
+      v1.0 · 470KB · Apple Silicon &amp; Intel ·
+      <a href="https://github.com/nounumm/gohome/releases">모든 버전</a>
+    </p>
+  </header>
+
+  <section>
+    <h2>하는 일</h2>
+    <div class="feat">
+      <div>
+        <h3>출근을 자동으로 찍습니다</h3>
+        <p>아침에 맥 잠금을 풀거나 절전에서 깨우면 그 시각이 출근으로 기록됩니다. 오전 8시부터 오후 3시 사이 첫 신호에만, 그날 기록이 없을 때만 찍힙니다. 시각이 엉뚱하면 팝오버에서 눌러 고칠 수 있습니다.</p>
+      </div>
+      <div>
+        <h3>퇴근 예정 시각을 계산합니다</h3>
+        <p>기본은 출근 + 9시간입니다. 반차를 켜면 4시간 근무로 잡고 12~13시 점심을 빼고 계산합니다.</p>
+      </div>
+      <div>
+        <h3>반차는 체크박스로 켭니다</h3>
+        <p>팝오버의 &ldquo;오늘 반차&rdquo; 하나면 됩니다. 출근이 오후 1시에서 3시 사이에 찍히면 오후 반차로 보고 알아서 켜집니다.</p>
+      </div>
+      <div>
+        <h3>메뉴바 아이콘이 색으로 알려줍니다</h3>
+        <p>퇴근 30분 전부터 아이콘이 주황에서 빨강으로 물듭니다. 10분 전과 정각에는 알림이 뜹니다.</p>
+      </div>
+      <div>
+        <h3>최근 10일치가 남습니다</h3>
+        <p>날짜별 출퇴근 시각과 근무 시간을 볼 수 있고, 9시간을 넘긴 날은 빨갛게 표시됩니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>설치</h2>
+    <ol>
+      <li>위 버튼으로 <code>gohome.zip</code> 을 받고 압축을 풉니다.</li>
+      <li>나온 폴더에서 <code>install.command</code> 를 더블클릭합니다.</li>
+      <li>메뉴바에 집 모양 아이콘이 생기면 끝입니다.</li>
+    </ol>
+    <p class="note">
+      <strong>왜 스크립트를 실행해야 하나요?</strong><br>
+      애플 개발자 인증서 없이 만든 앱이라 그냥 열면 macOS가 막습니다.
+      <code>install.command</code> 는 앱을 <code>/Applications</code> 로 옮기고 그 격리 표시를 떼는 일만 합니다.
+      무슨 일을 하는지는 <a href="https://github.com/nounumm/gohome/blob/main/build_and_package.sh">빌드 스크립트</a>에서 그대로 볼 수 있습니다.
+    </p>
+  </section>
+
+  <section>
+    <h2>알아둘 것</h2>
+    <table>
+      <tr><td>필요 버전</td><td>macOS 14 이상</td></tr>
+      <tr><td>기록 저장 위치</td><td><code>~/Library/Application Support/gohome/</code> 안의 JSON 파일 하나. 어디로도 전송되지 않습니다.</td></tr>
+      <tr><td>상주</td><td>잠금 해제를 감지해야 하므로 설정에서 자동 실행을 켜두는 편이 낫습니다.</td></tr>
+      <tr><td>기준 시각</td><td>한국 시간(KST) 고정</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>윈도우</h2>
+    <p>같은 저장소 <code>windows/</code> 에 트레이 앱 포팅이 들어 있습니다. 빌드는 직접 하셔야 하고, 방법은 <a href="https://github.com/nounumm/gohome/tree/main/windows">해당 폴더의 README</a>에 있습니다.</p>
+  </section>
+
+  <footer>
+    <a href="https://github.com/nounumm/gohome">github.com/nounumm/gohome</a>
+  </footer>
+
+</div>
+
+</body>
+</html>
