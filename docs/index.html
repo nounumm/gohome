@@ -86,6 +86,19 @@
     font-size: 0.9em;
   }
 
+  .trouble { margin-top: 28px; }
+  .trouble h3 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-dim); font-weight: 600; margin: 0 0 14px;
+  }
+  dl { margin: 0; }
+  dt {
+    font-weight: 600; font-size: 15px; margin-top: 18px;
+    padding-left: 14px; border-left: 2px solid var(--accent);
+  }
+  dt:first-of-type { margin-top: 0; }
+  dd { margin: 5px 0 0 16px; color: var(--text-dim); font-size: 15px; }
+
   .note {
     background: var(--bg-soft);
     border: 1px solid var(--line);
@@ -153,29 +166,46 @@
   <section>
     <h2>설치 — macOS</h2>
     <ol>
-      <li>버튼으로 <code>gohome.zip</code> 을 받고 압축을 풉니다.</li>
-      <li>나온 폴더에서 <code>install.command</code> 를 더블클릭합니다.</li>
-      <li>메뉴바에 집 모양 아이콘이 생기면 끝입니다.</li>
+      <li>위 <strong>macOS용 내려받기</strong> 를 누릅니다.</li>
+      <li>받은 <code>gohome.zip</code> 의 압축을 풉니다.</li>
+      <li>풀린 폴더 안의 <code>install.command</code> 를 더블클릭합니다.</li>
+      <li>메뉴 막대에 집 모양 아이콘이 생기면 끝입니다.</li>
     </ol>
-    <p class="note">
-      <strong>왜 스크립트를 실행해야 하나요?</strong><br>
-      서명이 없는 앱이라 그냥 열면 macOS가 막습니다.
-      <code>install.command</code> 가 앱을 제자리에 옮기고 그 부분을 처리합니다.
-    </p>
+
+    <div class="trouble">
+      <h3>이렇게 안 되면</h3>
+      <dl>
+        <dt>&ldquo;확인되지 않은 개발자&rdquo; 경고가 떠서 안 열린다면</dt>
+        <dd>시스템 설정 → 개인정보 보호 및 보안 을 열고, 아래쪽 <strong>무시하고 열기</strong> 를 누른 뒤 다시 더블클릭합니다. 서명이 없는 앱이라 처음 한 번만 필요합니다.</dd>
+
+        <dt>&ldquo;gohome.app 을 찾을 수 없습니다&rdquo; 가 뜬다면</dt>
+        <dd>압축을 풀지 않고 실행한 경우입니다. zip 을 먼저 풀고, 풀린 폴더 안의 <code>install.command</code> 를 실행합니다.</dd>
+      </dl>
+    </div>
   </section>
 
   <section>
     <h2>설치 — Windows</h2>
     <ol>
-      <li>버튼으로 <code>GoHome.exe</code> 를 받습니다. 설치 과정이 따로 없습니다.</li>
-      <li><strong>계속 둘 폴더로 먼저 옮깁니다.</strong> 나중에 옮기면 자동 실행이 풀립니다.</li>
-      <li>실행하면 트레이에 집 모양 아이콘이 생깁니다.</li>
+      <li>위 <strong>Windows용 내려받기</strong> 를 누릅니다.</li>
+      <li>받은 <code>GoHome.exe</code> 를 계속 둘 폴더로 옮깁니다. 나중에 옮기면 자동 실행이 풀립니다.</li>
+      <li>더블클릭해서 실행합니다. 설치 과정은 없습니다.</li>
+      <li>작업 표시줄 오른쪽에 집 모양 아이콘이 생기면 끝입니다.</li>
     </ol>
-    <p class="note">
-      <strong>&ldquo;Windows에서 PC를 보호했습니다&rdquo; 창이 뜹니다.</strong><br>
-      서명이 없어서 처음 한 번 뜹니다.
-      <strong>추가 정보</strong> 를 누르고 <strong>실행</strong> 을 고르면 됩니다. 다음부터는 안 뜹니다.
-    </p>
+
+    <div class="trouble">
+      <h3>이렇게 안 되면</h3>
+      <dl>
+        <dt>&ldquo;Windows에서 PC를 보호했습니다&rdquo; 창이 뜬다면</dt>
+        <dd><strong>추가 정보</strong> 를 누르고 <strong>실행</strong> 을 고릅니다. 서명이 없어서 처음 한 번만 뜹니다.</dd>
+
+        <dt>실행했는데 아이콘이 안 보인다면</dt>
+        <dd>숨겨진 아이콘 안에 들어간 경우입니다. 작업 표시줄의 <strong>^</strong> 를 눌러 확인하고, 아이콘을 밖으로 끌어내면 계속 보입니다.</dd>
+
+        <dt>자동 실행을 켰는데 재부팅 후 안 뜬다면</dt>
+        <dd>exe 를 다른 폴더로 옮긴 경우입니다. 트레이 아이콘 우클릭 메뉴에서 자동 실행을 껐다가 다시 켜면 지금 위치로 다시 잡힙니다.</dd>
+      </dl>
+    </div>
   </section>
 
   <section>
