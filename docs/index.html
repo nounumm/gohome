@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>집에가자 — 퇴근 시간 알려주는 맥 메뉴바 앱</title>
-<meta name="description" content="잠금만 풀면 출근이 찍히고, 퇴근 예정 시각을 메뉴바에서 알려주는 macOS 앱.">
+<title>집에가자 — 퇴근 시간 알려주는 앱</title>
+<meta name="description" content="잠금만 풀면 출근이 찍히고, 퇴근 예정 시각을 알려주는 macOS·Windows 앱.">
 <link rel="icon" href="icon.png">
 <style>
   :root {
@@ -56,6 +56,12 @@
     border-radius: 9px;
   }
   .btn:hover { opacity: 0.88; }
+  .btn-alt {
+    background: transparent;
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .meta { color: var(--text-dim); font-size: 13px; margin-top: 12px; }
   .meta a { color: var(--text-dim); }
 
@@ -107,10 +113,13 @@
   <header>
     <img src="icon.png" alt="">
     <h1>집에가자</h1>
-    <p class="tagline">잠금만 풀면 출근이 찍히고,<br>언제 집에 갈 수 있는지 메뉴바가 알려줍니다.</p>
-    <a class="btn" href="https://github.com/nounumm/gohome/releases/latest/download/gohome.zip">macOS용 내려받기</a>
+    <p class="tagline">잠금만 풀면 출근이 찍히고,<br>언제 집에 갈 수 있는지 알려줍니다.</p>
+    <div class="btns">
+      <a class="btn" href="https://github.com/nounumm/gohome/releases/latest/download/gohome.zip">macOS용 내려받기</a>
+      <a class="btn btn-alt" href="https://github.com/nounumm/gohome/releases/latest/download/GoHome.exe">Windows용 내려받기</a>
+    </div>
     <p class="meta">
-      v1.0 · 470KB · Apple Silicon &amp; Intel ·
+      v1.0 · macOS 470KB · Windows 68MB ·
       <a href="https://github.com/nounumm/gohome/releases">모든 버전</a>
     </p>
   </header>
@@ -131,7 +140,7 @@
         <p>팝오버의 &ldquo;오늘 반차&rdquo; 하나면 됩니다. 출근이 오후 1시에서 3시 사이에 찍히면 오후 반차로 보고 알아서 켜집니다.</p>
       </div>
       <div>
-        <h3>메뉴바 아이콘이 색으로 알려줍니다</h3>
+        <h3>아이콘이 색으로 알려줍니다</h3>
         <p>퇴근 30분 전부터 아이콘이 주황에서 빨강으로 물듭니다. 10분 전과 정각에는 알림이 뜹니다.</p>
       </div>
       <div>
@@ -142,9 +151,9 @@
   </section>
 
   <section>
-    <h2>설치</h2>
+    <h2>설치 — macOS</h2>
     <ol>
-      <li>위 버튼으로 <code>gohome.zip</code> 을 받고 압축을 풉니다.</li>
+      <li>버튼으로 <code>gohome.zip</code> 을 받고 압축을 풉니다.</li>
       <li>나온 폴더에서 <code>install.command</code> 를 더블클릭합니다.</li>
       <li>메뉴바에 집 모양 아이콘이 생기면 끝입니다.</li>
     </ol>
@@ -157,18 +166,36 @@
   </section>
 
   <section>
+    <h2>설치 — Windows</h2>
+    <ol>
+      <li>버튼으로 <code>GoHome.exe</code> 를 받습니다. 설치 과정이 따로 없습니다.</li>
+      <li><strong>계속 둘 폴더로 먼저 옮깁니다.</strong> 자동 실행을 켜면 그 시점의 경로를 기억하기 때문에, 나중에 파일을 옮기면 자동 실행이 깨집니다.</li>
+      <li>실행하면 트레이에 집 모양 아이콘이 생깁니다.</li>
+    </ol>
+    <p class="note">
+      <strong>&ldquo;Windows에서 PC를 보호했습니다&rdquo; 창이 뜹니다.</strong><br>
+      코드 서명 인증서가 없어서 처음 실행할 때 한 번 뜹니다.
+      <strong>추가 정보</strong> 를 누르고 <strong>실행</strong> 을 고르면 됩니다. 다음부터는 안 뜹니다.
+    </p>
+    <p class="note" style="margin-top:12px">
+      <strong>.NET 설치는 필요 없습니다.</strong><br>
+      런타임을 앱 안에 넣어 만들어서 exe 하나로 돌아갑니다. 68MB인 이유가 이겁니다.
+    </p>
+  </section>
+
+  <section>
     <h2>알아둘 것</h2>
     <table>
-      <tr><td>필요 버전</td><td>macOS 14 이상</td></tr>
-      <tr><td>기록 저장 위치</td><td><code>~/Library/Application Support/gohome/</code> 안의 JSON 파일 하나. 어디로도 전송되지 않습니다.</td></tr>
+      <tr><td>필요 버전</td><td>macOS 14 이상 / Windows 10 이상 (64비트)</td></tr>
+      <tr><td>기록 저장 위치</td><td>맥은 <code>~/Library/Application Support/gohome/</code>, 윈도우는 <code>%APPDATA%\gohome\</code> 안의 JSON 파일 하나. 어디로도 전송되지 않습니다.</td></tr>
       <tr><td>상주</td><td>잠금 해제를 감지해야 하므로 설정에서 자동 실행을 켜두는 편이 낫습니다.</td></tr>
       <tr><td>기준 시각</td><td>한국 시간(KST) 고정</td></tr>
     </table>
   </section>
 
   <section>
-    <h2>윈도우</h2>
-    <p>같은 저장소 <code>windows/</code> 에 트레이 앱 포팅이 들어 있습니다. 빌드는 직접 하셔야 하고, 방법은 <a href="https://github.com/nounumm/gohome/tree/main/windows">해당 폴더의 README</a>에 있습니다.</p>
+    <h2>직접 빌드하기</h2>
+    <p>맥은 <code>build_and_package.sh</code>, 윈도우는 <code>windows/build.bat</code> 하나면 됩니다. 윈도우 쪽 구조와 맥 버전과의 차이는 <a href="https://github.com/nounumm/gohome/tree/main/windows">windows/README.md</a>에 정리해 뒀습니다.</p>
   </section>
 
   <footer>
