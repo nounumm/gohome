@@ -3,7 +3,6 @@ import SwiftUI
 struct PopoverView: View {
     @StateObject private var vm = WorkViewModel()
     @State private var activeSheet: Sheet? = nil
-    @State private var editCheckInTime: Date = Date()
 
     enum Sheet: Identifiable {
         case settings, history, checkInEdit
@@ -55,8 +54,7 @@ struct PopoverView: View {
                     HStack(spacing: 8) {
                         TimeCard(label: "출근 시간", time: vm.formatTime(vm.today?.checkIn))
                             .onTapGesture {
-                                guard let checkIn = vm.today?.checkIn else { return }
-                                editCheckInTime = checkIn
+                                guard vm.today?.checkIn != nil else { return }
                                 activeSheet = .checkInEdit
                             }
                         TimeCard(label: "퇴근 예정", time: vm.formatTime(vm.expectedCheckout()))
@@ -118,7 +116,7 @@ struct PopoverView: View {
                         switch sheet {
                         case .settings:    SettingsView(activeSheet: $activeSheet)
                         case .history:     HistoryView(vm: vm, activeSheet: $activeSheet)
-                        case .checkInEdit: CheckInEditView(time: editCheckInTime, activeSheet: $activeSheet) { newTime in
+                        case .checkInEdit: CheckInEditView(time: vm.today?.checkIn ?? Date(), activeSheet: $activeSheet) { newTime in
                             vm.updateCheckIn(date: newTime)
                         }
                         }
@@ -241,14 +239,26 @@ struct CheckInEditView: View {
     @Binding var activeSheet: PopoverView.Sheet?
     let onSave: (Date) -> Void
 
-    @State private var hour: Int = 0
-    @State private var minute: Int = 0
+    @State private var hour: Int
+    @State private var minute: Int
 
     // 표시·저장이 전부 KST 기준이므로 편집도 같은 달력을 쓴다.
-    private var calendar: Calendar {
+    private static var calendar: Calendar {
         var c = Calendar.current
         c.timeZone = TimeZone(identifier: "Asia/Seoul")!
         return c
+    }
+    private var calendar: Calendar { Self.calendar }
+
+    // onAppear 로 채우면 자식 입력칸의 onAppear 가 먼저 돌아 0 으로 덮인다.
+    // 첫 렌더부터 올바른 값이 들어가도록 init 에서 채운다.
+    init(time: Date, activeSheet: Binding<PopoverView.Sheet?>, onSave: @escaping (Date) -> Void) {
+        self.time = time
+        self._activeSheet = activeSheet
+        self.onSave = onSave
+        let cal = Self.calendar
+        _hour = State(initialValue: cal.component(.hour, from: time))
+        _minute = State(initialValue: cal.component(.minute, from: time))
     }
 
     var body: some View {
@@ -288,18 +298,20 @@ struct CheckInEditView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            hour   = calendar.component(.hour,   from: time)
-            minute = calendar.component(.minute, from: time)
-        }
     }
 }
 
 private struct TimeUnitStepper: View {
     @Binding var value: Int
     let range: ClosedRange<Int>
-    @State private var text: String = ""
+    @State private var text: String
     @FocusState private var focused: Bool
+
+    init(value: Binding<Int>, range: ClosedRange<Int>) {
+        self._value = value
+        self.range = range
+        _text = State(initialValue: String(format: "%02d", value.wrappedValue))
+    }
 
     var body: some View {
         VStack(spacing: 6) {
@@ -316,7 +328,6 @@ private struct TimeUnitStepper: View {
                 .multilineTextAlignment(.center)
                 .frame(width: 66)
                 .focused($focused)
-                .onAppear { text = String(format: "%02d", value) }
                 .onChange(of: text) {
                     // 저장 버튼을 누르는 시점에 포커스 이탈이 아직 반영되지 않을 수 있다.
                     // 입력 중에도 유효한 값이면 바로 반영해 둔다.
