@@ -118,8 +118,8 @@ struct PopoverView: View {
                         switch sheet {
                         case .settings:    SettingsView(activeSheet: $activeSheet)
                         case .history:     HistoryView(vm: vm, activeSheet: $activeSheet)
-                        case .checkInEdit: CheckInEditView(time: $editCheckInTime, activeSheet: $activeSheet) {
-                            vm.updateCheckIn(date: editCheckInTime)
+                        case .checkInEdit: CheckInEditView(time: editCheckInTime, activeSheet: $activeSheet) { newTime in
+                            vm.updateCheckIn(date: newTime)
                         }
                         }
                     }
@@ -237,12 +237,19 @@ struct TimeCard: View {
 }
 
 struct CheckInEditView: View {
-    @Binding var time: Date
+    let time: Date
     @Binding var activeSheet: PopoverView.Sheet?
-    let onSave: () -> Void
+    let onSave: (Date) -> Void
 
     @State private var hour: Int = 0
     @State private var minute: Int = 0
+
+    // 표시·저장이 전부 KST 기준이므로 편집도 같은 달력을 쓴다.
+    private var calendar: Calendar {
+        var c = Calendar.current
+        c.timeZone = TimeZone(identifier: "Asia/Seoul")!
+        return c
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -254,11 +261,9 @@ struct CheckInEditView: View {
                     .buttonStyle(.plain)
                     .foregroundColor(.secondary)
                 Button("저장") {
-                    let cal = Calendar.current
-                    if let updated = cal.date(bySettingHour: hour, minute: minute, second: 0, of: time) {
-                        time = updated
+                    if let updated = calendar.date(bySettingHour: hour, minute: minute, second: 0, of: time) {
+                        onSave(updated)
                     }
-                    onSave()
                     activeSheet = nil
                 }
                 .buttonStyle(.plain)
@@ -284,9 +289,8 @@ struct CheckInEditView: View {
         .padding(24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
-            let cal = Calendar.current
-            hour   = cal.component(.hour,   from: time)
-            minute = cal.component(.minute, from: time)
+            hour   = calendar.component(.hour,   from: time)
+            minute = calendar.component(.minute, from: time)
         }
     }
 }
@@ -313,6 +317,11 @@ private struct TimeUnitStepper: View {
                 .frame(width: 66)
                 .focused($focused)
                 .onAppear { text = String(format: "%02d", value) }
+                .onChange(of: text) {
+                    // 저장 버튼을 누르는 시점에 포커스 이탈이 아직 반영되지 않을 수 있다.
+                    // 입력 중에도 유효한 값이면 바로 반영해 둔다.
+                    if let n = Int(text), range.contains(n) { value = n }
+                }
                 .onChange(of: focused) {
                     if !focused {
                         let clamped = min(max(Int(text) ?? value, range.lowerBound), range.upperBound)
