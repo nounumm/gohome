@@ -132,7 +132,7 @@
       <a class="btn btn-alt" href="https://github.com/nounumm/gohome/releases/latest/download/GoHome.exe">Windows용 내려받기</a>
     </div>
     <p class="meta">
-      v1.1 · macOS 470KB · Windows 68MB ·
+      <span id="rel">v1.1 · macOS 470KB · Windows 68MB</span> ·
       <a href="https://github.com/nounumm/gohome/releases">모든 버전</a>
     </p>
   </header>
@@ -232,6 +232,34 @@
   </footer>
 
 </div>
+
+<script>
+(function () {
+  var el = document.getElementById('rel');
+  if (!el || !window.fetch) return;
+
+  function size(n) {
+    return n >= 1048576
+      ? Math.round(n / 1048576) + 'MB'
+      : Math.round(n / 1024) + 'KB';
+  }
+
+  fetch('https://api.github.com/repos/nounumm/gohome/releases/latest')
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function (d) {
+      var sizes = {};
+      (d.assets || []).forEach(function (a) { sizes[a.name] = a.size; });
+
+      var parts = [];
+      if (d.tag_name) parts.push(d.tag_name);
+      if (sizes['gohome.zip']) parts.push('macOS ' + size(sizes['gohome.zip']));
+      if (sizes['GoHome.exe']) parts.push('Windows ' + size(sizes['GoHome.exe']));
+
+      if (parts.length) el.textContent = parts.join(' · ');
+    })
+    .catch(function () { /* 실패하면 적혀 있던 값을 그대로 둔다 */ });
+})();
+</script>
 
 </body>
 </html>
