@@ -38,13 +38,8 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     }
 
     func scheduleCheckout(at date: Date) {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            print("🔔 알림 권한 상태: \(settings.authorizationStatus.rawValue)") // 2=authorized
-        }
-
         let reminderRemaining = date.timeIntervalSinceNow - 600
         let exactRemaining = date.timeIntervalSinceNow
-        print("🕐 퇴근 예정: \(date), 10분전까지: \(Int(reminderRemaining))초, 정각까지: \(Int(exactRemaining))초")
 
         if reminderRemaining > 0 {
             let content = UNMutableNotificationContent()
@@ -57,7 +52,6 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             let request = UNNotificationRequest(identifier: reminderNotificationId, content: content, trigger: trigger)
             UNUserNotificationCenter.current().add(request) { error in
                 if let error = error { print("❌ 10분전 알림 등록 실패: \(error)") }
-                else { print("✅ 10분전 알림 등록 완료") }
             }
         }
 
@@ -72,7 +66,6 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             let request = UNNotificationRequest(identifier: exactNotificationId, content: content, trigger: trigger)
             UNUserNotificationCenter.current().add(request) { error in
                 if let error = error { print("❌ 정각 알림 등록 실패: \(error)") }
-                else { print("✅ 정각 알림 등록 완료") }
             }
         }
     }

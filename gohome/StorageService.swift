@@ -30,12 +30,17 @@ class StorageService {
         return records
     }
 
+    /// 통째로 덮어쓰면 쓰는 도중 죽었을 때 전체 기록이 날아간다.
+    /// .atomic 은 임시 파일에 쓰고 교체하므로 실패해도 이전 파일이 남는다.
+    private func write(_ all: [String: WorkRecord]) {
+        guard let data = try? JSONEncoder().encode(all) else { return }
+        try? data.write(to: fileURL(), options: .atomic)
+    }
+
     func save(_ record: WorkRecord) {
         var all = loadAll()
         all[dateKey(for: record.date)] = record
-        if let data = try? JSONEncoder().encode(all) {
-            try? data.write(to: fileURL())
-        }
+        write(all)
     }
 
     func todayRecord() -> WorkRecord? {
@@ -57,9 +62,7 @@ class StorageService {
         guard record.checkIn == nil else { return }
         record.checkIn = now
         all[key] = record
-        if let data = try? JSONEncoder().encode(all) {
-            try? data.write(to: fileURL())
-        }
+        write(all)
     }
 
     func updateCheckIn(date: Date) {
@@ -68,9 +71,7 @@ class StorageService {
         guard var record = all[key] else { return }
         record.checkIn = date
         all[key] = record
-        if let data = try? JSONEncoder().encode(all) {
-            try? data.write(to: fileURL())
-        }
+        write(all)
     }
 
     /// 오늘 기록이 아직 없으면 만들어서 기록한다.
@@ -80,22 +81,33 @@ class StorageService {
         var record = all[key] ?? WorkRecord(date: Date())
         record.halfDay = value
         all[key] = record
-        if let data = try? JSONEncoder().encode(all) {
-            try? data.write(to: fileURL())
-        }
+        write(all)
+    }
+
+    /// 퇴근이 아직 안 찍힌 기록의 날짜 키.
+    /// 자정을 넘겨 일한 경우 오늘 기록이 없으므로 전날 기록을 가리킨다.
+    private func openRecordKey(in all: [String: WorkRecord]) -> String? {
+        let today = dateKey()
+        if let r = all[today], r.checkIn != nil, r.checkOut == nil { return today }
+
+        let yesterday = dateKey(for: Date().addingTimeInterval(-86400))
+        if let r = all[yesterday], r.checkIn != nil, r.checkOut == nil { return yesterday }
+
+        return nil
+    }
+
+    /// 아직 퇴근하지 않은 기록. 없으면 nil.
+    func openRecord() -> WorkRecord? {
+        let all = loadAll()
+        guard let key = openRecordKey(in: all) else { return nil }
+        return all[key]
     }
 
     func checkOut() {
-        let now = Date()
         var all = loadAll()
-        let key = dateKey()
-        guard var record = all[key],
-              record.checkIn != nil,
-              record.checkOut == nil else { return }
-        record.checkOut = now
+        guard let key = openRecordKey(in: all), var record = all[key] else { return }
+        record.checkOut = Date()
         all[key] = record
-        if let data = try? JSONEncoder().encode(all) {
-            try? data.write(to: fileURL())
-        }
+        write(all)
     }
 }

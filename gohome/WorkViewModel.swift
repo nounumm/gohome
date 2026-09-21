@@ -10,6 +10,9 @@ class WorkViewModel: ObservableObject {
     @Published var today: WorkRecord?
     @Published var recentRecords: [WorkRecord] = []
 
+    /// 아직 퇴근이 안 찍힌 기록. 자정을 넘겨 일하면 전날 기록이 들어온다.
+    @Published var openRecord: WorkRecord?
+
     private let storage = StorageService.shared
     private let seoul = TimeZone(identifier: "Asia/Seoul")!
 
@@ -41,6 +44,7 @@ class WorkViewModel: ObservableObject {
     func load() {
         today = storage.todayRecord()
         recentRecords = storage.recentRecords()
+        openRecord = storage.openRecord()
     }
 
     @objc func reload() {
@@ -96,19 +100,29 @@ class WorkViewModel: ObservableObject {
         return current.addingTimeInterval(remaining)
     }
 
-    /// 오후 반차 출근 시간대: 13:00 ~ 15:00. 이 사이에 출근하면 자동으로 반차 처리한다.
-    /// 그 전/후엔 팝오버 체크박스로 직접 지정한다.
-    static func applyHalfDayAutoRule() {
-        guard let checkIn = StorageService.shared.todayRecord()?.checkIn else { return }
-
+    /// 오후 반차 출근 시간대: 13:00 ~ 15:00.
+    private static func isAfternoonHalfDay(_ date: Date) -> Bool {
         var cal = Calendar.current
         cal.timeZone = TimeZone(identifier: "Asia/Seoul")!
 
-        let c = cal.dateComponents([.hour, .minute, .second], from: checkIn)
+        let c = cal.dateComponents([.hour, .minute, .second], from: date)
         let tod = (c.hour ?? 0) * 3600 + (c.minute ?? 0) * 60 + (c.second ?? 0)
+        return tod >= 13 * 3600 && tod <= 15 * 3600
+    }
 
-        if tod >= 13 * 3600 && tod <= 15 * 3600 {
+    /// 출근 시각이 오후 반차 시간대면 자동으로 반차를 켠다.
+    /// 그 전/후엔 팝오버 체크박스로 직접 지정한다.
+    ///
+    /// previousCheckIn 은 출근 시각을 고칠 때만 넘긴다. 고치기 전 시각이
+    /// 반차 시간대였고 고친 시각이 아니라면, 자동으로 켰던 반차도 같이 끈다.
+    /// 직접 켠 반차는 건드리지 않는다 (고치기 전 시각이 시간대 밖이므로).
+    static func applyHalfDayAutoRule(previousCheckIn: Date? = nil) {
+        guard let checkIn = StorageService.shared.todayRecord()?.checkIn else { return }
+
+        if isAfternoonHalfDay(checkIn) {
             StorageService.shared.setHalfDay(true)
+        } else if let previous = previousCheckIn, isAfternoonHalfDay(previous) {
+            StorageService.shared.setHalfDay(false)
         }
     }
 
@@ -123,8 +137,9 @@ class WorkViewModel: ObservableObject {
     func updateCheckIn(date: Date) {
         // 값이 그대로면 파일을 다시 쓰지 않는다.
         guard today?.checkIn != date else { return }
+        let previous = today?.checkIn
         storage.updateCheckIn(date: date)
-        WorkViewModel.applyHalfDayAutoRule()
+        WorkViewModel.applyHalfDayAutoRule(previousCheckIn: previous)
         load()
         refreshCheckoutSchedule()
         WidgetCenter.shared.reloadAllTimelines()

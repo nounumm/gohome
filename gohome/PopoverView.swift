@@ -88,7 +88,7 @@ struct PopoverView: View {
                 Button("퇴근하기") { vm.checkOut() }
                     .buttonStyle(.bordered)
                     .controlSize(.regular)
-                    .disabled(vm.today?.checkIn == nil || vm.today?.checkOut != nil)
+                    .disabled(vm.openRecord == nil)
 
                 Spacer()
 
