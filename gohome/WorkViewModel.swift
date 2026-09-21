@@ -121,6 +121,8 @@ class WorkViewModel: ObservableObject {
     }
 
     func updateCheckIn(date: Date) {
+        // 값이 그대로면 파일을 다시 쓰지 않는다.
+        guard today?.checkIn != date else { return }
         storage.updateCheckIn(date: date)
         WorkViewModel.applyHalfDayAutoRule()
         load()

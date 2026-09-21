@@ -271,7 +271,10 @@ struct CheckInEditView: View {
                     .buttonStyle(.plain)
                     .foregroundColor(.secondary)
                 Button("저장") {
-                    if let updated = calendar.date(bySettingHour: hour, minute: minute, second: 0, of: time) {
+                    // 초는 원래 기록의 값을 그대로 둔다. 시·분만 고치러 들어온 화면이라
+                    // 여기서 0 으로 깎으면 건드리지 않은 값이 바뀐다.
+                    let second = calendar.component(.second, from: time)
+                    if let updated = calendar.date(bySettingHour: hour, minute: minute, second: second, of: time) {
                         onSave(updated)
                     }
                     activeSheet = nil
