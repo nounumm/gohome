@@ -20,9 +20,7 @@
             CornerRadius="10"
             BorderThickness="1"
             Padding="16,12,16,10">
-        <Border.Effect>
-            <DropShadowEffect BlurRadius="18" ShadowDepth="3" Direction="270" Opacity="0.28"/>
-        </Border.Effect>
+        <!-- 그림자(Border.Effect)는 코드에서 붙인다. 실패하면 그림자 없이 뜨게 하려고. -->
 
         <!-- 화면 3개 중 하나만 보인다: 메인 / 출근 내역 / 설정 -->
         <StackPanel>

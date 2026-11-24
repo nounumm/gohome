@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using GoHome.Services;
 
 namespace GoHome;
@@ -46,14 +47,37 @@ public partial class PopupWindow : Window
     private static readonly Color DarkButtonBorder = Color.FromRgb(0x52, 0x52, 0x5B);
     private static readonly Color LightButtonBorder = Color.FromRgb(0xD8, 0xD8, 0xDE);
 
-    public PopupWindow()
+    public PopupWindow(bool withShadow = true)
     {
         InitializeComponent();
         ApplyTheme();
+        if (withShadow) TryApplyShadow();
 
         // SizeToContent 로 높이가 바뀔 때마다 우하단에 다시 붙인다.
         SizeChanged += (_, _) => Reposition();
         ContentRendered += (_, _) => Reposition();
+    }
+
+    /// <summary>
+    /// 그림자는 셰이더로 그려서 그래픽 드라이버 상태에 따라 실패할 수 있다.
+    /// 실패하면 그림자 없이 띄운다.
+    /// </summary>
+    private void TryApplyShadow()
+    {
+        try
+        {
+            Card.Effect = new DropShadowEffect
+            {
+                BlurRadius = 18,
+                ShadowDepth = 3,
+                Direction = 270,
+                Opacity = 0.28,
+            };
+        }
+        catch (Exception)
+        {
+            Card.Effect = null;
+        }
     }
 
     private void ApplyTheme()

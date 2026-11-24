@@ -98,15 +98,46 @@ public sealed class TrayApp : IDisposable
     {
         WorkService.Shared.Reload();
 
+        try
+        {
+            ShowPopupCore(withShadow: true);
+        }
+        catch (Exception)
+        {
+            // 띄우다 실패한 창은 반쯤 만들어진 채 남아 다시 Show 하면 또 실패한다.
+            // 버리고 그림자 없이 새로 만들어 한 번 더 띄운다.
+            DiscardPopup();
+            try
+            {
+                ShowPopupCore(withShadow: false);
+            }
+            catch (Exception)
+            {
+                DiscardPopup();
+            }
+        }
+    }
+
+    private void ShowPopupCore(bool withShadow)
+    {
         if (_popup is null)
         {
-            _popup = new PopupWindow();
+            var popup = new PopupWindow(withShadow);
             // 고정(핀) 켜져 있으면 포커스를 잃어도 자동으로 안 닫는다.
-            _popup.Deactivated += (_, _) => { if (!_popup.IsPinned) HidePopup(); };
+            popup.Deactivated += (_, _) => { if (!popup.IsPinned) HidePopup(); };
+            _popup = popup;
         }
 
         _popup.Refresh();
         _popup.ShowAtCorner();
+    }
+
+    private void DiscardPopup()
+    {
+        var broken = _popup;
+        _popup = null;
+        if (broken is null) return;
+        try { broken.Close(); } catch (Exception) { }
     }
 
     private void HidePopup()
