@@ -22,6 +22,12 @@
 
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon></ApplicationIcon>
+
+    <!--
+      단일 파일 배포 시 WPF 네이티브 DLL(PresentationNative_cor3 등)도 exe 안에 넣는다.
+      빼면 exe 하나만 받은 PC에서 DllNotFoundException 으로 바로 꺼진다.
+    -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <!-- Pretendard. 설치 없이 앱에 내장해서 쓴다 (pack://application:,,,/Fonts/#패밀리명). -->
