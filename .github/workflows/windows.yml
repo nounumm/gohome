@@ -1,0 +1,49 @@
+# 윈도우 exe 를 GitHub 에서 빌드한다.
+# windows/build.bat 의 full 빌드(런타임 포함, 단일 파일)와 같은 설정이다.
+# 코드 서명(SignPath)을 붙이려면 소스에서 검증 가능한 빌드가 필요해서 만들었다.
+name: Windows build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'windows/**'
+      - '.github/workflows/windows.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish (full)
+        working-directory: windows
+        run: >
+          dotnet publish GoHome\GoHome.csproj -c Release -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:EnableCompressionInSingleFile=true
+          -o dist\full
+
+      - name: Check single file
+        working-directory: windows\dist\full
+        shell: pwsh
+        run: |
+          # exe 하나만으로 실행되어야 한다. 옆에 네이티브 DLL 이 남으면 실패로 본다.
+          Get-ChildItem | Format-Table Name, Length
+          $dlls = Get-ChildItem -Filter *.dll
+          if ($dlls) { Write-Error "exe 옆에 DLL 이 남았습니다: $($dlls.Name -join ', ')"; exit 1 }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GoHome-win-x64
+          path: windows/dist/full/GoHome.exe
+          if-no-files-found: error
