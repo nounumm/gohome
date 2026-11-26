@@ -133,7 +133,8 @@
     </div>
     <p class="meta">
       <span id="rel">v1.1 · macOS 470KB · Windows 68MB</span> ·
-      <a href="https://github.com/nounumm/gohome/releases">모든 버전</a>
+      <a href="https://github.com/nounumm/gohome/releases">모든 버전</a> ·
+      <a href="#signing">Code signing policy</a>
     </p>
   </header>
 
@@ -222,13 +223,27 @@
     </table>
   </section>
 
+  <section id="signing">
+    <h2>코드 서명 정책 (Code signing policy)</h2>
+    <p>Free code signing provided by <a href="https://about.signpath.io">SignPath.io</a>, certificate by <a href="https://signpath.org">SignPath Foundation</a></p>
+    <p>Windows용 <code>GoHome.exe</code> 는 이 저장소의 소스에서 <a href="https://github.com/nounumm/gohome/actions/workflows/windows.yml">GitHub Actions</a> 로 빌드한 것만 서명합니다. 서명은 릴리즈마다 승인자가 직접 승인합니다.</p>
+    <table>
+      <tr><td>Committers and reviewers</td><td><a href="https://github.com/nounumm">nounumm</a></td></tr>
+      <tr><td>Approvers</td><td><a href="https://github.com/nounumm">nounumm</a></td></tr>
+    </table>
+    <h3 style="margin-top:22px">개인정보 (Privacy policy)</h3>
+    <p>This program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it.</p>
+    <p>집에가자는 네트워크를 쓰지 않습니다. 출퇴근 기록은 이 컴퓨터 안에만 저장됩니다.</p>
+  </section>
+
   <section>
     <h2>직접 빌드하기</h2>
     <p>맥은 <code>build_and_package.sh</code>, 윈도우는 <code>windows/build.bat</code> 하나면 됩니다. 윈도우 쪽 구조와 맥 버전과의 차이는 <a href="https://github.com/nounumm/gohome/tree/main/windows">windows/README.md</a>에 정리해 뒀습니다.</p>
   </section>
 
   <footer>
-    <a href="https://github.com/nounumm/gohome">github.com/nounumm/gohome</a>
+    <a href="https://github.com/nounumm/gohome">github.com/nounumm/gohome</a> ·
+    <a href="#signing">Code signing policy</a>
   </footer>
 
 </div>
